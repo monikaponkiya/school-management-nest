@@ -3,7 +3,6 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { compareSync } from 'bcrypt';
 import { Model } from 'mongoose';
-import { UserType } from 'src/common/constants';
 import { LoginDto } from 'src/common/dto/login.dto';
 import { AuthExceptions } from 'src/common/helpers/exceptions/auth.exception';
 import { User, UserDocument } from 'src/user/schema/user.schema';

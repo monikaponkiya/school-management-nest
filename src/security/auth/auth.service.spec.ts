@@ -3,12 +3,10 @@ import { AuthService } from './auth.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { JwtService } from '@nestjs/jwt';
 import { Model } from 'mongoose';
-import { User, UserDocument } from 'src/user/schema/user.schema';
+import { User } from 'src/user/schema/user.schema';
 
 describe('AuthService', () => {
   let service: AuthService;
-  let userModel: Model<UserDocument>;
-  let jwtService: JwtService;
 
   jest.mock('bcrypt', () => ({
     compareSync: jest.fn(), // Mocking compareSync function from bcrypt
@@ -30,8 +28,6 @@ describe('AuthService', () => {
     }).compile();
 
     service = module.get<AuthService>(AuthService);
-    // adminModel = module.get<Model<AdminDocument>>(getModelToken(Admin.name));
-    // jwtService = module.get<JwtService>(JwtService);
   });
 
   it('should be defined', () => {

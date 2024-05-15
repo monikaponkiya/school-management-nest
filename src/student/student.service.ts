@@ -6,6 +6,7 @@ import { AuthExceptions } from 'src/common/helpers/exceptions/auth.exception';
 import { Student, StudentDocument } from './schema/student.schema';
 import { ListStudentDto } from './dto/list-student.dto';
 import { CreateUpdateStudentDto } from './dto/create-update-student.dto';
+import { STUDENT_NOT_EXIST } from 'src/common/constants/response.constants';
 
 @Injectable()
 export class StudentService {
@@ -175,7 +176,7 @@ export class StudentService {
       );
       if (!isStudentExist) {
         throw AuthExceptions.customException(
-          "Student doesn't exist",
+          STUDENT_NOT_EXIST,
           statusBadRequest,
         );
       }

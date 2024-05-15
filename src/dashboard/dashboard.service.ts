@@ -38,9 +38,13 @@ export class DashboardService {
       aggregateQuery.push({
         $count: 'count',
       });
-      return await this.studentModel.aggregate(aggregateQuery);
+      const studentCount = await this.studentModel.aggregate(aggregateQuery);
+      return studentCount;
     } catch (error) {
-      throw AuthExceptions.customException(error.message, statusBadRequest);
+      throw AuthExceptions.customException(
+        error.message,
+        error.statusCode ?? statusBadRequest,
+      );
     }
   }
 }

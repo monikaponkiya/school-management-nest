@@ -22,7 +22,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }
 
   handleRequest(err: any, user: any, info: any) {
-    console.log('user: ', user);
     if (info?.name === 'TokenExpiredError') {
       throw AuthExceptions.TokenExpired();
     }

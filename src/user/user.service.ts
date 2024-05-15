@@ -63,7 +63,7 @@ export class UserService {
         password: await hash(randomPassword, 10),
         role: UserType.SCHOOL,
       };
-      let school = await this.userModel.create(createSchoolObj);
+      const school = await this.userModel.create(createSchoolObj);
       await this.emailService.emailSender(
         school.email.toLowerCase(),
         'Please login using this password',

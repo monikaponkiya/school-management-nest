@@ -20,6 +20,7 @@ export const GET_STUDENT = 'Get student details successfully';
 export const STUDENT_LIST = 'Student list successfully';
 export const STUDENT_ACTIVE_INACTIVE = 'Student status update successfully';
 export const DELETE_STUDENT = 'Student deleted successfully';
+export const STUDENT_NOT_EXIST = "Student doesn't exist";
 
 // DESHBOARD
 export const STUDENT_COUNT = 'Student count get successfully';
