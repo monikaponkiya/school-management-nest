@@ -3,13 +3,12 @@ import { InjectModel } from '@nestjs/mongoose';
 import { School, SchoolDocument } from './schema/school.schema';
 import mongoose, { Model } from 'mongoose';
 import { EmailService } from 'src/email/email.service';
-import { CreateSchoolDto } from './dto/create-school.dto';
 import { AuthExceptions } from 'src/common/helpers/exceptions/auth.exception';
 import { statusBadRequest } from 'src/common/constants/response.status.constant';
 import { welcomeTemplate } from 'src/email/emailTemplates/welcome';
 import { hash } from 'bcrypt';
-import { UpdateSchoolDto } from './dto/update-school.dto';
 import { ListDto } from 'src/common/dto/list.dto';
+import { CreateUpdateSchoolDto } from './dto/create-school.dto';
 
 @Injectable()
 export class SchoolService {
@@ -19,7 +18,7 @@ export class SchoolService {
     private emailService: EmailService,
   ) {}
 
-  async createSchool(body: CreateSchoolDto) {
+  async createSchool(body: CreateUpdateSchoolDto) {
     try {
       const isSchoolExist = await this.schoolModel.findOne({
         email: body.email,
@@ -47,7 +46,7 @@ export class SchoolService {
     }
   }
 
-  async updateSchoolDetails(body: UpdateSchoolDto, schoolId: string) {
+  async updateSchoolDetails(body: CreateUpdateSchoolDto, schoolId: string) {
     try {
       const isSchoolExist = await this.schoolModel.findOne({ _id: schoolId });
       if (!isSchoolExist) {

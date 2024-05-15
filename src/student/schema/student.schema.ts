@@ -26,10 +26,10 @@ export class Student {
   @Prop({ required: true })
   DOB: string;
 
-  @Prop({ default: true })
+  @Prop({ required: true, default: true })
   isActive: boolean;
 
-  @Prop({ default: false })
+  @Prop({ required: true, default: false })
   isDeleted: boolean;
 }
 

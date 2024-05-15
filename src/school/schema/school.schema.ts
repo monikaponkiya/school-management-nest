@@ -14,7 +14,7 @@ export class School {
   @Prop({ required: true })
   photo: string;
 
-  @Prop({ default: null })
+  @Prop({ required: true, default: null })
   address: string;
 
   @Prop({ required: true })

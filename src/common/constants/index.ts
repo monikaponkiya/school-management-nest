@@ -1,5 +1,4 @@
-export const UserType = {
-  ADMIN: 1,
-  SCHOOL: 2,
-  STUDENT: 3,
-};
+export enum UserType {
+  ADMIN = 'admin',
+  SCHOOL = 'school',
+}

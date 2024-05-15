@@ -13,6 +13,7 @@ import { ImageModule } from './image/image.module';
 import { SchoolModule } from './school/school.module';
 import { StudentModule } from './student/student.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { AuthModule } from './security/auth/auth.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
       ignoreEnvFile: false,
       isGlobal: true,
     }),
+    AuthModule,
     DatabaseModule,
     AdminModule,
     ImageModule,

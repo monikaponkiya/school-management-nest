@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { StudentService } from './student.service';
@@ -18,13 +19,14 @@ import {
   STUDENT_LIST,
   UPDATE_STUDENT,
 } from 'src/common/constants/response.constants';
-import { CreateStudentDto } from './dto/create-student.dto';
-import { UpdateStudentDto } from './dto/update-student.dto';
 import { ListStudentDto } from './dto/list-student.dto';
+import { SchoolGuard } from 'src/guard/school.guard';
+import { CreateUpdateStudentDto } from './dto/create-update-student.dto';
 
 @Controller('student')
 @ApiTags('Student Management')
 @ApiBearerAuth()
+@UseGuards(SchoolGuard)
 export class StudentController {
   constructor(private studentService: StudentService) {}
 
@@ -33,7 +35,7 @@ export class StudentController {
     summary: 'create student api',
   })
   @ResponseMessage(CREATE_STUDENT)
-  async createStudent(@Body() body: CreateStudentDto) {
+  async createStudent(@Body() body: CreateUpdateStudentDto) {
     return await this.studentService.createStudent(body);
   }
 
@@ -43,7 +45,7 @@ export class StudentController {
   })
   @ResponseMessage(UPDATE_STUDENT)
   async updateStudent(
-    @Body() body: UpdateStudentDto,
+    @Body() body: CreateUpdateStudentDto,
     @Param('studentId') studentId: string,
   ) {
     return await this.studentService.updateStudent(body, studentId);

@@ -4,9 +4,8 @@ import mongoose, { Model } from 'mongoose';
 import { statusBadRequest } from 'src/common/constants/response.status.constant';
 import { AuthExceptions } from 'src/common/helpers/exceptions/auth.exception';
 import { Student, StudentDocument } from './schema/student.schema';
-import { CreateStudentDto } from './dto/create-student.dto';
-import { UpdateStudentDto } from './dto/update-student.dto';
 import { ListStudentDto } from './dto/list-student.dto';
+import { CreateUpdateStudentDto } from './dto/create-update-student.dto';
 
 @Injectable()
 export class StudentService {
@@ -15,7 +14,7 @@ export class StudentService {
     private studentModel: Model<StudentDocument>,
   ) {}
 
-  async createStudent(body: CreateStudentDto) {
+  async createStudent(body: CreateUpdateStudentDto) {
     try {
       const studentObj = {
         ...body,
@@ -27,7 +26,7 @@ export class StudentService {
     }
   }
 
-  async updateStudent(body: UpdateStudentDto, studentId: string) {
+  async updateStudent(body: CreateUpdateStudentDto, studentId: string) {
     try {
       const isStudentExist = await this.studentModel.findOne({
         _id: studentId,

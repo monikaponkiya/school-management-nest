@@ -1,55 +1,34 @@
-import { Injectable } from '@nestjs/common';
-import { statusBadRequest } from 'src/common/constants/response.status.constant';
-import * as fs from 'fs';
-import * as path from 'path';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { AuthExceptions } from 'src/common/helpers/exceptions/auth.exception';
-import { CommonService } from 'src/common/services/common.service';
 
 @Injectable()
 export class ImageService {
-  constructor(private commonService: CommonService) {}
+  constructor() {}
 
-  async multipleFileUpload(files, param): Promise<any> {
+  async imageUpload(file: any, moduleName: any) {
     try {
-      if (!fs.existsSync(`./uploads/school`)) {
-        fs.mkdirSync(`./uploads/school`, {
-          recursive: true,
-        });
+      if (!file) {
+        throw AuthExceptions.customException(
+          'Image is required',
+          HttpStatus.BAD_REQUEST,
+        );
       }
-      const fileArray = [];
-      Promise.all(
-        files.map((file) => {
-          if (file && !file.originalname.match(/\.(jpg|JPG|pdf|jpeg|png)$/)) {
-            throw AuthExceptions.customException(
-              'Only jpg,JPG,pdf files are allowed!!',
-              statusBadRequest,
-            );
-          } else {
-            const random = this.commonService.generateRandomNumber(8);
-            const extension = path.extname(file.originalname);
-            const fileName = random + extension;
 
-            fileArray.push({
-              name: fileName,
-              url: `/uploads/school/${fileName}`,
-            });
+      if (!moduleName) {
+        throw AuthExceptions.customException(
+          'moduleName is required',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
 
-            fs.copyFile(file.path, `/uploads/school/${fileName}`, (err) => {
-              if (err) {
-                throw AuthExceptions.customException(
-                  'Something went wrong!!',
-                  statusBadRequest,
-                );
-              } else {
-              }
-            });
-          }
-        }),
-      );
-      Promise.all(files);
-      return fileArray;
+      const path = { filename: `${moduleName}/${file.filename}` };
+
+      return path;
     } catch (error) {
-      throw AuthExceptions.customException(error.message, statusBadRequest);
+      throw AuthExceptions.customException(
+        error.response.message,
+        error.response.statusCode,
+      );
     }
   }
 }

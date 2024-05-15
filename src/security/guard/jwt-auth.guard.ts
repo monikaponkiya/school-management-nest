@@ -1,20 +1,16 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { JwtService } from '@nestjs/jwt';
-
-import { Request } from 'express';
+import { AuthGuard } from '@nestjs/passport';
 import { IS_PUBLIC_KEY } from '../auth/auth.decorator';
+import { AuthExceptions } from 'src/common/helpers/exceptions/auth.exception';
 
 @Injectable()
-export class JwtAuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService, private reflector: Reflector) {}
+export class JwtAuthGuard extends AuthGuard('jwt') {
+  constructor(private reflector: Reflector) {
+    super();
+  }
 
-  async canActivate(context: ExecutionContext): Promise<boolean> {
+  canActivate(context: ExecutionContext) {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -22,25 +18,23 @@ export class JwtAuthGuard implements CanActivate {
     if (isPublic) {
       return true;
     }
-
-    const request = context.switchToHttp().getRequest();
-    const token = this.extractTokenFromHeader(request);
-    if (!token) {
-      throw new UnauthorizedException();
-    }
-    try {
-      const payload = await this.jwtService.verifyAsync(token, {
-        secret: process.env.JWT_TOKEN_SECRET,
-      });
-      request['user'] = payload;
-    } catch {
-      throw new UnauthorizedException();
-    }
-    return true;
+    return super.canActivate(context);
   }
 
-  private extractTokenFromHeader(request: Request): string | undefined {
-    const [type, token] = request.headers.authorization?.split(' ') ?? [];
-    return type === 'Bearer' ? token : undefined;
+  handleRequest(err: any, user: any, info: any) {
+    console.log('user: ', user);
+    if (info?.name === 'TokenExpiredError') {
+      throw AuthExceptions.TokenExpired();
+    }
+
+    if (info?.name === 'JsonWebTokenError') {
+      throw AuthExceptions.InvalidToken();
+    }
+
+    if (err || !user) {
+      throw err || AuthExceptions.ForbiddenException();
+    }
+
+    return user;
   }
 }

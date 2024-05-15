@@ -3,6 +3,9 @@ export const RESPONSE_SUCCESS = 'Response success';
 // ADMIN
 export const ADMIN_LOGIN = 'Admin login successfully';
 
+// SIGNIN
+export const SIGNIN = 'Signin successfully';
+
 // SCHOOL
 export const SCHOOL_LOGIN = 'School login successfully';
 export const CREATE_SCHOOL = 'Create new school successfully';
@@ -20,3 +23,6 @@ export const DELETE_STUDENT = 'Student deleted successfully';
 
 // DESHBOARD
 export const STUDENT_COUNT = 'Student count get successfully';
+
+// IMAGE
+export const IMAGE_UPLOAD = 'Image upload successfully';

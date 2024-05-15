@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Admin, AdminDocument } from './schema/admin.schema';
 import { Model } from 'mongoose';
-import { statusBadRequest } from 'src/common/constants/response.status.constant';
+import { statusBadRequest } from '../common/constants/response.status.constant';
 import { hash } from 'bcrypt';
-import { AuthExceptions } from 'src/common/helpers/exceptions/auth.exception';
+import { AuthExceptions } from '../common/helpers/exceptions/auth.exception';
 
 @Injectable()
 export class AdminService {

@@ -4,6 +4,11 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { join } from 'path';
+import {
+  BadRequestException,
+  ValidationError,
+  ValidationPipe,
+} from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -23,7 +28,7 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('/', app, document, {
+  SwaggerModule.setup('/api', app, document, {
     swaggerOptions: { defaultModelsExpandDepth: -1 },
   });
 
@@ -32,10 +37,21 @@ async function bootstrap() {
     app.enableCors();
   }
 
-  app.useStaticAssets(join(__dirname, '../', 'uploads'), {
-    index: false,
-    prefix: '/uploads',
-  });
+  app.useGlobalPipes(
+    new ValidationPipe({
+      exceptionFactory: (errors: ValidationError[]) => {
+        const [err] = errors;
+        const [validationError] = Object.values(err?.constraints ?? {});
+        throw new BadRequestException(validationError);
+      },
+      whitelist: true,
+    }),
+  );
+
+  // app.useStaticAssets(join(__dirname, '../', 'uploads'), {
+  //   index: false,
+  //   prefix: '/uploads',
+  // });
 
   await app.listen(appConfig.port);
 }

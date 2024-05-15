@@ -1,13 +1,15 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DashboardService } from './dashboard.service';
 import { ResponseMessage } from 'src/common/decorators/response.decorator';
 import { STUDENT_COUNT } from 'src/common/constants/response.constants';
 import { FilterDto } from './dto/filter.dto';
+import { AdminGuard } from 'src/guard/admin.guard';
 
 @Controller('dashboard')
 @ApiTags('Dashboard Management')
 @ApiBearerAuth()
+@UseGuards(AdminGuard)
 export class DashboardController {
   constructor(private dashboardService: DashboardService) {}
 
