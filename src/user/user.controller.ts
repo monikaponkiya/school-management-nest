@@ -8,23 +8,23 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { SchoolService } from './school.service';
-import { ResponseMessage } from 'src/common/decorators/response.decorator';
+import { UserService } from './user.service';
+import { AdminGuard } from 'src/guard/admin.guard';
 import {
   CREATE_SCHOOL,
-  GET_SCHOOL,
-  SCHOOL_LIST,
   UPDATE_SCHOOL,
+  SCHOOL_LIST,
+  GET_SCHOOL,
 } from 'src/common/constants/response.constants';
+import { ResponseMessage } from 'src/common/decorators/response.decorator';
 import { ListDto } from 'src/common/dto/list.dto';
-import { AdminGuard } from 'src/guard/admin.guard';
-import { CreateUpdateSchoolDto } from './dto/create-school.dto';
+import { CreateUpdateUserDto } from './dto/create-user.dto';
 
 @Controller('school')
 @ApiTags('School Management')
 @ApiBearerAuth()
-export class SchoolController {
-  constructor(private schoolService: SchoolService) {}
+export class UserController {
+  constructor(private userService: UserService) {}
 
   @UseGuards(AdminGuard)
   @Post('/create-school')
@@ -32,20 +32,21 @@ export class SchoolController {
     summary: 'create school api',
   })
   @ResponseMessage(CREATE_SCHOOL)
-  async createSchool(@Body() body: CreateUpdateSchoolDto) {
-    return await this.schoolService.createSchool(body);
+  async createSchool(@Body() body: CreateUpdateUserDto) {
+    return await this.userService.createSchool(body);
   }
 
   @Put('/update-school/:schoolId')
+  @UseGuards(AdminGuard)
   @ApiOperation({
     summary: 'update school api',
   })
   @ResponseMessage(UPDATE_SCHOOL)
   async updateSchool(
-    @Body() body: CreateUpdateSchoolDto,
+    @Body() body: CreateUpdateUserDto,
     @Param('schoolId') schoolId: string,
   ) {
-    return await this.schoolService.updateSchoolDetails(body, schoolId);
+    return await this.userService.updateSchoolDetails(body, schoolId);
   }
 
   @UseGuards(AdminGuard)
@@ -55,12 +56,12 @@ export class SchoolController {
   })
   @ResponseMessage(SCHOOL_LIST)
   async schoolList(@Body() body: ListDto) {
-    return await this.schoolService.getSchoolList(body);
+    return await this.userService.getSchoolList(body);
   }
 
   @Get('school-details/:schoolId')
   @ResponseMessage(GET_SCHOOL)
   async getSchoolDetails(@Param('schoolId') schoolId: string) {
-    return await this.schoolService.getSchoolDetails(schoolId);
+    return await this.userService.getSchoolDetails(schoolId);
   }
 }

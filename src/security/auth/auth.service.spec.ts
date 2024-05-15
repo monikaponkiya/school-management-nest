@@ -1,14 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
-import { Admin, AdminDocument } from '../../../src/admin/schema/admin.schema';
 import { getModelToken } from '@nestjs/mongoose';
 import { JwtService } from '@nestjs/jwt';
 import { Model } from 'mongoose';
-import { School } from '../../../src/school/schema/school.schema';
+import { User, UserDocument } from 'src/user/schema/user.schema';
 
 describe('AuthService', () => {
   let service: AuthService;
-  let adminModel: Model<AdminDocument>;
+  let userModel: Model<UserDocument>;
   let jwtService: JwtService;
 
   jest.mock('bcrypt', () => ({
@@ -24,11 +23,7 @@ describe('AuthService', () => {
         AuthService,
         JwtService,
         {
-          provide: getModelToken(Admin.name),
-          useValue: Model,
-        },
-        {
-          provide: getModelToken(School.name),
+          provide: getModelToken(User.name),
           useValue: Model,
         },
       ],

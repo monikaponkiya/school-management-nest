@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AdminModule } from './admin/admin.module';
 import { ConfigModule } from '@nestjs/config';
 import AppConfiguration from './config/app.config';
 import DatabaseConfiguration from './config/database.config';
@@ -10,10 +9,10 @@ import { TransformInterceptor } from './common/interceptors/transform.intercepto
 import { JwtAuthGuard } from './security/guard/jwt-auth.guard';
 import { JwtService } from '@nestjs/jwt';
 import { ImageModule } from './image/image.module';
-import { SchoolModule } from './school/school.module';
 import { StudentModule } from './student/student.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { AuthModule } from './security/auth/auth.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -24,11 +23,10 @@ import { AuthModule } from './security/auth/auth.module';
     }),
     AuthModule,
     DatabaseModule,
-    AdminModule,
     ImageModule,
-    SchoolModule,
     StudentModule,
     DashboardModule,
+    UserModule,
   ],
   controllers: [],
   providers: [

@@ -2,16 +2,14 @@ import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Admin, AdminSchema } from 'src/admin/schema/admin.schema';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { School, SchoolSchema } from 'src/school/schema/school.schema';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { User, UserSchema } from 'src/user/schema/user.schema';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Admin.name, schema: AdminSchema }]),
-    MongooseModule.forFeature([{ name: School.name, schema: SchoolSchema }]),
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({

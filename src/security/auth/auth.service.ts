@@ -3,36 +3,28 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { compareSync } from 'bcrypt';
 import { Model } from 'mongoose';
-import { Admin, AdminDocument } from 'src/admin/schema/admin.schema';
 import { UserType } from 'src/common/constants';
-import { statusBadRequest } from 'src/common/constants/response.status.constant';
 import { LoginDto } from 'src/common/dto/login.dto';
 import { AuthExceptions } from 'src/common/helpers/exceptions/auth.exception';
-import { School, SchoolDocument } from 'src/school/schema/school.schema';
+import { User, UserDocument } from 'src/user/schema/user.schema';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectModel(Admin.name)
-    private adminModel: Model<AdminDocument>,
-    @InjectModel(School.name)
-    private schoolModel: Model<SchoolDocument>,
+    @InjectModel(User.name)
+    private userModel: Model<UserDocument>,
     private jwtService: JwtService,
   ) {}
 
   async loginUser(body: LoginDto) {
     try {
-      let findUser;
-      if (body.role === UserType.ADMIN) {
-        findUser = await this.adminModel.findOne({ email: body.email });
-      }
-      if (body.role === UserType.SCHOOL) {
-        findUser = await this.schoolModel.findOne({ email: body.email });
-      }
+      let findUser = await this.userModel.findOne({
+        email: body.email,
+        role: body.role,
+      });
       if (!findUser) {
         throw AuthExceptions.AccountNotFound();
       }
-
       const isPasswordMatch = await compareSync(
         body.password,
         findUser.password,

@@ -1,36 +1,31 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { SchoolController } from './school.controller';
-import { SchoolService } from './school.service';
+import { UserService } from './user.service';
 import { getModelToken } from '@nestjs/mongoose';
-import { School } from './schema/school.schema';
+import { User } from './schema/user.schema';
 import { Model } from 'mongoose';
 import { EmailService } from 'src/email/email.service';
 
-describe('SchoolController', () => {
-  let controller: SchoolController;
-  let service: SchoolService;
+describe('UserService', () => {
+  let service: UserService;
   let emailService: EmailService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [SchoolController],
       providers: [
-        SchoolService,
+        UserService,
         EmailService,
         {
-          provide: getModelToken(School.name),
+          provide: getModelToken(User.name),
           useValue: Model,
         },
       ],
     }).compile();
 
-    controller = module.get<SchoolController>(SchoolController);
-    service = module.get<SchoolService>(SchoolService);
+    service = module.get<UserService>(UserService);
     emailService = module.get<EmailService>(EmailService);
   });
 
   it('should be defined', () => {
-    expect(controller).toBeDefined();
     expect(service).toBeDefined();
     expect(emailService).toBeDefined();
   });

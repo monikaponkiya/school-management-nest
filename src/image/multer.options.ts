@@ -4,7 +4,7 @@ import { diskStorage } from 'multer';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 export const imagePath = {
-  dest: './uploads',
+  dest: './upload',
 };
 
 export const multerOptions = () => ({

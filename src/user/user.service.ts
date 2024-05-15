@@ -1,27 +1,55 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { School, SchoolDocument } from './schema/school.schema';
+import { User, UserDocument } from './schema/user.schema';
 import mongoose, { Model } from 'mongoose';
-import { EmailService } from 'src/email/email.service';
+import { hash } from 'bcrypt';
 import { AuthExceptions } from 'src/common/helpers/exceptions/auth.exception';
 import { statusBadRequest } from 'src/common/constants/response.status.constant';
-import { welcomeTemplate } from 'src/email/emailTemplates/welcome';
-import { hash } from 'bcrypt';
+import { UserType } from 'src/common/constants';
+import { CreateUpdateUserDto } from './dto/create-user.dto';
+import { EmailService } from 'src/email/email.service';
 import { ListDto } from 'src/common/dto/list.dto';
-import { CreateUpdateSchoolDto } from './dto/create-school.dto';
+import { welcomeTemplate } from 'src/email/emailTemplates/welcome';
 
 @Injectable()
-export class SchoolService {
+export class UserService {
   constructor(
-    @InjectModel(School.name)
-    private schoolModel: Model<SchoolDocument>,
+    @InjectModel(User.name)
+    private userModel: Model<UserDocument>,
     private emailService: EmailService,
   ) {}
 
-  async createSchool(body: CreateUpdateSchoolDto) {
+  async createInitialAdmin() {
     try {
-      const isSchoolExist = await this.schoolModel.findOne({
+      const isExist = await this.userModel.findOne({
+        email: process.env.ADMIN_EMAIL,
+      });
+      if (!isExist) {
+        const createAdminObj: CreateUpdateUserDto = {
+          name: 'Admin',
+          photo: '1715598638208.jpg',
+          address: 'Ahmedabad',
+          zipcode: '380015',
+          city: 'Ahmedabad',
+          state: 'Gujarat',
+          country: 'India',
+          email: process.env.ADMIN_EMAIL,
+          role: UserType.ADMIN,
+          password: await hash(process.env.ADMIN_PASSWORD, 10),
+        } as never;
+        const admin = await this.userModel.create(createAdminObj);
+        return admin;
+      }
+    } catch (error) {
+      throw AuthExceptions.customException(error.message, statusBadRequest);
+    }
+  }
+
+  async createSchool(body: CreateUpdateUserDto) {
+    try {
+      const isSchoolExist = await this.userModel.findOne({
         email: body.email,
+        role: UserType.SCHOOL,
       });
       if (isSchoolExist) {
         throw AuthExceptions.customException(
@@ -33,8 +61,9 @@ export class SchoolService {
       const createSchoolObj = {
         ...body,
         password: await hash(randomPassword, 10),
+        role: UserType.SCHOOL,
       };
-      let school = await this.schoolModel.create(createSchoolObj);
+      let school = await this.userModel.create(createSchoolObj);
       await this.emailService.emailSender(
         school.email.toLowerCase(),
         'Please login using this password',
@@ -46,16 +75,19 @@ export class SchoolService {
     }
   }
 
-  async updateSchoolDetails(body: CreateUpdateSchoolDto, schoolId: string) {
+  async updateSchoolDetails(body: CreateUpdateUserDto, schoolId: string) {
     try {
-      const isSchoolExist = await this.schoolModel.findOne({ _id: schoolId });
+      const isSchoolExist = await this.userModel.findOne({
+        _id: schoolId,
+        role: UserType.SCHOOL,
+      });
       if (!isSchoolExist) {
         throw AuthExceptions.customException(
           "School doesn't exists",
           statusBadRequest,
         );
       }
-      return this.schoolModel.findOneAndUpdate(
+      return this.userModel.findOneAndUpdate(
         {
           _id: schoolId,
         },
@@ -92,6 +124,11 @@ export class SchoolService {
         });
       }
       aggregateQuery.push({
+        $match: {
+          role: UserType.SCHOOL,
+        },
+      });
+      aggregateQuery.push({
         $project: {
           password: 0,
           createdAt: 0,
@@ -111,7 +148,7 @@ export class SchoolService {
           total_records: [{ $count: 'count' }],
         },
       });
-      let schoolList = await this.schoolModel.aggregate(aggregateQuery);
+      let schoolList = await this.userModel.aggregate(aggregateQuery);
       if (schoolList && !schoolList[0]) {
         schoolList = [
           {
@@ -128,7 +165,10 @@ export class SchoolService {
 
   async getSchoolDetails(schoolId: string) {
     try {
-      const isSchoolExist = await this.schoolModel.findOne({ _id: schoolId });
+      const isSchoolExist = await this.userModel.findOne({
+        _id: schoolId,
+        role: UserType.SCHOOL,
+      });
       if (!isSchoolExist) {
         throw AuthExceptions.customException(
           "School doesn't exists",
@@ -150,7 +190,7 @@ export class SchoolService {
           },
         },
       );
-      return await this.schoolModel.aggregate(aggregateQuery);
+      return await this.userModel.aggregate(aggregateQuery);
     } catch (error) {
       throw AuthExceptions.customException(error.message, statusBadRequest);
     }

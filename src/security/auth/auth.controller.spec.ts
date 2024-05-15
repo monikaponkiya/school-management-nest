@@ -2,10 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { getModelToken } from '@nestjs/mongoose';
-import { Admin } from 'src/admin/schema/admin.schema';
 import { Model } from 'mongoose';
-import { School } from 'src/school/schema/school.schema';
 import { JwtService } from '@nestjs/jwt';
+import { User } from 'src/user/schema/user.schema';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -19,11 +18,7 @@ describe('AuthController', () => {
         AuthService,
         JwtService,
         {
-          provide: getModelToken(Admin.name),
-          useValue: Model,
-        },
-        {
-          provide: getModelToken(School.name),
+          provide: getModelToken(User.name),
           useValue: Model,
         },
       ],
