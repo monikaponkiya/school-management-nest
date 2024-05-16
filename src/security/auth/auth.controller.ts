@@ -16,6 +16,6 @@ export class AuthController {
   @ResponseMessage(SIGNIN)
   @ApiBody({ type: LoginDto })
   signIn(@Body() signinData: LoginDto) {
-    return this.authService.loginUser(signinData);
+    return this.authService.signIn(signinData);
   }
 }

@@ -34,16 +34,19 @@ export class StudentService {
       });
       if (!isStudentExist) {
         throw AuthExceptions.customException(
-          "Student doesn't exist",
+          STUDENT_NOT_EXIST,
           statusBadRequest,
         );
       }
-      return this.studentModel.findByIdAndUpdate(
+      return this.studentModel.findOneAndUpdate(
         {
           _id: studentId,
         },
-        body,
-        { new: true },
+        { $set: body },
+        {
+          new: true,
+          runValidators: true,
+        },
       );
     } catch (error) {
       throw AuthExceptions.customException(error.message, statusBadRequest);
@@ -166,7 +169,7 @@ export class StudentService {
     }
   }
 
-  async getStudentDetailById(studentId: string) {
+  async getStudentDetail(studentId: string) {
     try {
       const isStudentExist = await this.studentModel.findOne(
         {

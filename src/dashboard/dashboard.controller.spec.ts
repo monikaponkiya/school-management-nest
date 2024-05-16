@@ -4,6 +4,7 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Student } from 'src/student/schema/student.schema';
 import { Model } from 'mongoose';
 import { DashboardService } from './dashboard.service';
+import { FilterDto } from './dto/filter.dto';
 
 describe('DashboardController', () => {
   let controller: DashboardController;
@@ -18,6 +19,12 @@ describe('DashboardController', () => {
           provide: getModelToken(Student.name),
           useValue: Model,
         },
+        {
+          provide: DashboardService,
+          useValue: {
+            getDashboardCount: jest.fn().mockResolvedValue({}),
+          },
+        },
       ],
     }).compile();
 
@@ -28,5 +35,14 @@ describe('DashboardController', () => {
   it('should be defined', () => {
     expect(controller).toBeDefined();
     expect(service).toBeDefined();
+  });
+
+  it('dashboard count controller', async () => {
+    const filterDto: FilterDto = {
+      standard: 2,
+      schoolId: '',
+    };
+    const response = await controller.getDashboardCount(filterDto);
+    expect(response).toEqual(response);
   });
 });

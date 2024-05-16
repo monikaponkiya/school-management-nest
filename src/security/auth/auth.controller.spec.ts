@@ -5,6 +5,8 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/user/schema/user.schema';
+import { LoginDto } from 'src/common/dto/login.dto';
+import { UserType } from 'src/common/constants';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -21,6 +23,12 @@ describe('AuthController', () => {
           provide: getModelToken(User.name),
           useValue: Model,
         },
+        {
+          provide: AuthService,
+          useValue: {
+            signIn: jest.fn().mockResolvedValue({}),
+          },
+        },
       ],
     }).compile();
 
@@ -33,5 +41,15 @@ describe('AuthController', () => {
     expect(controller).toBeDefined();
     expect(service).toBeDefined();
     expect(jwtService).toBeDefined();
+  });
+
+  it('user login controller', async () => {
+    const loginDto: LoginDto = {
+      email: 'test@example.com',
+      password: 'password123',
+      role: UserType.ADMIN,
+    };
+    const response = await controller.signIn(loginDto);
+    expect(response).toEqual(response);
   });
 });

@@ -15,7 +15,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async loginUser(body: LoginDto) {
+  async signIn(body: LoginDto) {
     try {
       let findUser = await this.userModel.findOne({
         email: body.email,

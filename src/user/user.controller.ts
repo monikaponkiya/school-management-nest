@@ -46,7 +46,7 @@ export class UserController {
     @Body() body: CreateUpdateUserDto,
     @Param('schoolId') schoolId: string,
   ) {
-    return await this.userService.updateSchoolDetails(body, schoolId);
+    return await this.userService.updateSchool(body, schoolId);
   }
 
   @UseGuards(AdminGuard)
@@ -56,7 +56,7 @@ export class UserController {
   })
   @ResponseMessage(SCHOOL_LIST)
   async schoolList(@Body() body: ListDto) {
-    return await this.userService.getSchoolList(body);
+    return await this.userService.schoolList(body);
   }
 
   @Get('school-details/:schoolId')

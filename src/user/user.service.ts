@@ -75,7 +75,7 @@ export class UserService {
     }
   }
 
-  async updateSchoolDetails(body: CreateUpdateUserDto, schoolId: string) {
+  async updateSchool(body: CreateUpdateUserDto, schoolId: string) {
     try {
       const isSchoolExist = await this.userModel.findOne({
         _id: schoolId,
@@ -91,9 +91,10 @@ export class UserService {
         {
           _id: schoolId,
         },
-        body,
+        { $set: body },
         {
           new: true,
+          runValidators: true,
         },
       );
     } catch (error) {
@@ -101,7 +102,7 @@ export class UserService {
     }
   }
 
-  async getSchoolList(body: ListDto) {
+  async schoolList(body: ListDto) {
     try {
       const page = body.page ? Number(body.page) : 1;
       const limit = body.limit ? Number(body.limit) : 10;

@@ -66,7 +66,7 @@ export class StudentController {
   })
   @ResponseMessage(GET_STUDENT)
   async getStudentDetail(@Param('studentId') studentId: string) {
-    return await this.studentService.getStudentDetailById(studentId);
+    return await this.studentService.getStudentDetail(studentId);
   }
 
   @Put('active-inactive-student/:studentId/:isActive')
